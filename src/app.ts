@@ -1,19 +1,22 @@
-
-import express, { type Application, type Request, type Response } from "express";
-
+import express, {
+  type Application,
+  type Request,
+  type Response,
+} from "express";
 
 import cookieParser from "cookie-parser";
 
 import cors from "cors";
 import { router } from "./app/router";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+import notFound from "./app/middleware/notFound";
 
-
-const app:Application = express();
+const app: Application = express();
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 
 app.use(cookieParser());
@@ -25,5 +28,7 @@ app.use("/api/v1", router);
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "welcome to the server" });
 });
+app.use(globalErrorHandler);
+app.use(notFound);
 
 export default app;
