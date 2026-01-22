@@ -131,10 +131,10 @@ To ensure absolute privacy between organizations, every database query automatic
 
 Postman Usage NotesFollow these steps to test the API flow effectively:Import: Import the provided Postman Collection into your workspace.Environment: Use the Live API URL as the base URL for all requests.Authentication:Login using the provided Test Credentials.Copy the returned accessToken.Set it as a Bearer Token in the Authorization tab of the collection or request.Recommended API Flow:Login as Platform Admin → Create a new Organization.Login as Organization Admin (created during Org setup) → Create Project & Members.Login as Organization Member → View assigned tasks.🔑 
 
-🔑 Test Credentials
+## 🔑 Test Credentials
 
-| Role                | Email                                                                       | Password     |
-| ------------------- | --------------------------------------------------------------------------- | ------------ |
-| Platform Admin      | [platform.admin@gmail.com](mailto:platform.admin@gmail.com)             | 12345678    |
-| Organization Admin  | [admin@smtech.com](mailto:admin@smtech.com)           | 12345678 |
-| Organization Member | [member@smtech.com](mailto:member@smtech.com) | 12345678  |
+Platform Admin  : platform.admin@gmail.com : 12345678
+ Organization Admin : admin@smtech.com : 12345678
+ Organization Member : member@smtech.com
+
+
