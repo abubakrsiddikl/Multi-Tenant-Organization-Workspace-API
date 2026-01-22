@@ -54,114 +54,87 @@ src/
 │
 └── server.ts               # Application entry point
 
-📊 ER Diagram
+## 📊 ER Diagram
 
 The ER diagram below represents the database schema and relationships between core entities.
 
-👉 Click the link to view the ER Diagram:
+👉 **Click the link to view the ER Diagram:**  
 https://drive.google.com/file/d/1n5R_QElb3TWiF4Tt9gzJSPIzZbL6BTXG/view?usp=sharing
 
-Entity Relationships (Logical View)
+### Entity Relationships (Logical View)
 
-An Organization has many Users
+- An **Organization** has many **Users**
+- An **Organization** owns many **Projects**
+- A **Project** contains many **Tasks**
+- A **User** can be assigned multiple **Tasks**
 
-An Organization owns many Projects
+---
 
-A Project contains many Tasks
+## 💾 Database Choice Reasoning
 
-A User can be assigned multiple Tasks
+I chose **MongoDB with Mongoose** for this assignment due to the following reasons:
 
-💾 Database Choice Reasoning
+- **Flexible Schema:** Workspace requirements (tasks, statuses, metadata) evolve frequently. MongoDB allows schema evolution without heavy migrations.
+- **Scalability:** MongoDB supports horizontal scaling, making it suitable for multi-tenant systems with growing organizations.
+- **Native JSON Support:** Works naturally with Node.js and TypeScript, reducing object-mapping overhead.
+- **Explicit Tenant Isolation:** Each document contains an `organizationId`, ensuring strict data separation at the query level.
 
-I chose MongoDB with Mongoose for this assignment due to the following reasons:
+---
 
-Flexible Schema: Workspace requirements (tasks, statuses, metadata) evolve frequently. MongoDB allows schema evolution without heavy migrations.
+## 🔐 Authentication & Authorization Strategy
 
-Scalability: MongoDB supports horizontal scaling, making it suitable for multi-tenant systems with growing organizations.
+Authorization is enforced using **JWT-based authentication** and **Role-Based Access Control (RBAC)**.
 
-Native JSON Support: Works naturally with Node.js and TypeScript, reducing object-mapping overhead.
+### How It Works
 
-Explicit Tenant Isolation: Each document contains an organizationId, ensuring strict data separation at the query level.
+#### 1️⃣ JWT Verification
+- Every protected route requires a valid **Bearer Token**.
 
-🔐 Authentication & Authorization Strategy
+#### 2️⃣ Request Enrichment
+- After verification, the decoded payload is attached to `req.user`:
 
-Authorization is enforced using JWT-based authentication and Role-Based Access Control (RBAC).
-
-How It Works
-
-JWT Verification
-
-Every protected route requires a valid Bearer Token.
-
-Request Enrichment
-
-After verification, the decoded payload is attached to req.user:
-
+```ts
 {
   userId,
   role,
   organizationId
 }
 
+### 3️⃣ Multi-Tenant Data Isolation
 
-Multi-Tenant Data Isolation
+Every database query enforces the following condition:
 
-Every database query enforces:
-
+```ts
 { organizationId: req.user.organizationId }
 
+Even if a user knows another organization’s resource ID, access is automatically denied due to the organization-level filter.
 
-Even if a user knows another organization’s resource ID, access is denied.
-
-Role Restrictions
+4️⃣ Role Restrictions
 
 Platform Admin → Organization management
 
-Organization Admin → User, Project, Task management
+Organization Admin → User, Project, and Task management
 
-Member → Can only view tasks where:
+Organization Member → Can only view tasks where:
 
 { assignedTo: req.user.userId }
 
+### 🛡️ Core Business Logic & Security
 
-Authorization logic is enforced via middleware and service layers, not directly in route files.
+#### 3️⃣ Multi-Tenant Data Isolation
+To ensure absolute privacy between organizations, every database query automatically enforces a strict filter. Even if a user knows a resource ID (Project or Task) from another organization, the system will deny access because the query scope is restricted to:
+```json
+{ organizationId: req.user.organizationId }
+4️⃣ Role-Based Access Control (RBAC)Authorization logic is decoupled from the routes and strictly enforced via Middlewares and Service Layers:Platform Admin: Responsible for high-level Organization management.Organization Admin: Manages Users, Projects, and Tasks within their specific organization.Organization Member: Restricted access. Can only view and interact with tasks assigned to them:JSON{ assignedTo: req.user.userId }
 
-📮 Postman Usage Notes
 
-Import the Postman Collection
 
-Use the Live API URL as the base URL
-
-Login using the test credentials below
-
-Copy the returned accessToken
-
-Set it as a Bearer Token in the Authorization tab
-
-Recommended API Flow
-
-Login as Platform Admin → Create Organization
-
-Login as Organization Admin → Create Project & Users
-
-Login as Member → View assigned tasks
+Postman Usage NotesFollow these steps to test the API flow effectively:Import: Import the provided Postman Collection into your workspace.Environment: Use the Live API URL as the base URL for all requests.Authentication:Login using the provided Test Credentials.Copy the returned accessToken.Set it as a Bearer Token in the Authorization tab of the collection or request.Recommended API Flow:Login as Platform Admin → Create a new Organization.Login as Organization Admin (created during Org setup) → Create Project & Members.Login as Organization Member → View assigned tasks.🔑 
 
 🔑 Test Credentials
-Role	Email	Password
-Platform Admin	platform.admin@abctech.com
-	Admin@123
-Organization Admin	admin@creativesolutions.com
-	OrgAdmin@123
-Organization Member	member.one@creativesolutions.com
-	Member@123
-✅ Key Highlights
 
-Strict multi-tenant data isolation
-
-Role-based access control
-
-Clean modular architecture
-
-Centralized error handling
-
-Production-ready deployment
+| Role                | Email                                                                       | Password     |
+| ------------------- | --------------------------------------------------------------------------- | ------------ |
+| Platform Admin      | [platform.admin@gmail.com](mailto:platform.admin@gmail.com)             | 12345678    |
+| Organization Admin  | [admin@smtech.com](mailto:admin@smtech.com)           | 12345678 |
+| Organization Member | [member@smtech.com](mailto:member@smtech.com) | 12345678  |
