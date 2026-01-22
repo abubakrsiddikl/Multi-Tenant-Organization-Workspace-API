@@ -135,6 +135,6 @@ Postman Usage NotesFollow these steps to test the API flow effectively:Import: I
 
 Platform Admin  : platform.admin@gmail.com : 12345678
  Organization Admin : admin@smtech.com : 12345678
- Organization Member : member@smtech.com
-
+ Organization Member : member@smtech.com : 12345678
+ 
 
