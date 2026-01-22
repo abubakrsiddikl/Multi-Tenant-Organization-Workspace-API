@@ -1,14 +1,14 @@
 /* eslint-disable no-console */
 import { Server } from "http";
 
-
 import mongoose from "mongoose";
 import app from "./app";
+import { envVars } from "./app/config/env";
 
 let server: Server;
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URL as string);
+    await mongoose.connect(envVars.MONGODB_URI);
 
     console.log("✅ Connected to DB!!");
 

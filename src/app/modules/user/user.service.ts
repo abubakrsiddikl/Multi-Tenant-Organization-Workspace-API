@@ -4,8 +4,9 @@ import AppError from "../../errorHelper/AppError";
 
 import { User } from "./user.model";
 
-import { IUser, UserRole } from "./user.validation";
+
 import { envVars } from "../../config/env";
+import { IUser, UserRole } from "./user.interface";
 
 const createUser = async (payload: Partial<IUser>, creatorRole?: string, creatorOrgId?: string) => {
   const isUserExist = await User.findOne({ email: payload.email });
